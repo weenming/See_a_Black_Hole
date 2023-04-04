@@ -17,4 +17,5 @@ Use volume
 
 ### Accretion Disk & Volumetric Rendering
 Page, D. N.; Thorne, K. S. (1974). "Disk-Accretion onto a Black Hole. Time-Averaged Structure of Accretion Disk". Astrophys. J. 191 (2): 499–506.
+
 Luminet, J. P. (1979). "Image of a spherical black hole with thin accretion disk". Astron. Astrophys. 75 (1–2): 228–235.
