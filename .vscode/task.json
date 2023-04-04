@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "labdal": "echo",
+      "type": "shell",
+      "command": "g++",
+      "args": ["-g", "2d_trajectory.cpp"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
