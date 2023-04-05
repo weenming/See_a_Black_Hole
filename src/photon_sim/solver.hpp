@@ -54,7 +54,7 @@ class SolverRK {
 
     this->trajectory = new vector<VectorBL>(max_step);
     // use RK-4 to solve, save trajectory to trajectory
-
+    double last_pr = pr;
     while (i < max_step) {
       double k1_r = dr(r, theta, pr, ptheta);
       double k1_theta = dtheta(r, theta, pr, ptheta);
@@ -62,11 +62,11 @@ class SolverRK {
       double k1_pr = dpr(r, theta, pr, ptheta);
       double k1_ptheta = dptheta(r, theta, pr, ptheta);
 
-      double r_tmp = r + k1_r * step_size;
-      double theta_tmp = theta + k1_theta * step_size;
-      double phi_tmp = phi + k1_phi * step_size;
-      double pr_tmp = pr + k1_pr * step_size;
-      double ptheta_tmp = ptheta + k1_ptheta * step_size;
+      double r_tmp = r + k1_r * step_size / 2;
+      double theta_tmp = theta + k1_theta * step_size / 2;
+      double phi_tmp = phi + k1_phi * step_size / 2;
+      double pr_tmp = pr + k1_pr * step_size / 2;
+      double ptheta_tmp = ptheta + k1_ptheta * step_size / 2;
 
       double k2_r = dr(r_tmp, theta_tmp, pr_tmp, ptheta_tmp);
       double k2_theta = dtheta(r_tmp, theta_tmp, pr_tmp, ptheta_tmp);
@@ -86,11 +86,11 @@ class SolverRK {
       double k3_pr = dpr(r_tmp, theta_tmp, pr_tmp, ptheta_tmp);
       double k3_ptheta = dptheta(r_tmp, theta_tmp, pr_tmp, ptheta_tmp);
 
-      r_tmp = r + k3_r * step_size / 2;
-      theta_tmp = theta + k3_theta * step_size / 2;
-      phi_tmp = phi + k3_phi * step_size / 2;
-      pr_tmp = pr + k3_pr * step_size / 2;
-      ptheta_tmp = ptheta + k3_ptheta * step_size / 2;
+      r_tmp = r + k3_r * step_size;
+      theta_tmp = theta + k3_theta * step_size;
+      phi_tmp = phi + k3_phi * step_size;
+      pr_tmp = pr + k3_pr * step_size;
+      ptheta_tmp = ptheta + k3_ptheta * step_size;
 
       double k4_r = dr(r_tmp, theta_tmp, pr_tmp, ptheta_tmp);
       double k4_theta = dtheta(r_tmp, theta_tmp, pr_tmp, ptheta_tmp);
@@ -104,7 +104,11 @@ class SolverRK {
       pr += RK_k(k1_pr, k2_pr, k3_pr, k4_pr) * step_size;
       ptheta += RK_k(k1_ptheta, k2_ptheta, k3_ptheta, k4_ptheta) * step_size;
 
-      trajectory->push_back(VectorBL(vector3({r, theta, phi}), black_hole->a));
+      // check
+      if (this->is_inside(r, pr, last_pr)) return;
+      last_pr = pr;
+
+      trajectory->at(i) = (VectorBL(vector3({r, theta, phi}), black_hole->a));
       i++;
 
       // DEBUG
@@ -114,7 +118,6 @@ class SolverRK {
     return;
   }
 
- protected:
   VectorBL *init_r;  // in the BH frame
   VectorCartesian
       *init_v;  // in the camera frame (x-axis is radius in BH frame)
@@ -125,8 +128,10 @@ class SolverRK {
 
   BlackHole *black_hole;
   const double INF_R = 100 * 2;  // M is set to 1 so R_s is 2
-  bool is_inf(VectorSpherical *vec) { return vec->r > INF_R; }
-  bool is_inside(VectorSpherical *vec) { return vec->r < 2; }
+  bool is_inf(double r) { return r > INF_R; }
+  bool is_inside(double r, double pr, double last_pr) {
+    return r < 2 || abs(pr) > 1e5 * abs(last_pr);
+  }
 
  private:
   // consts
