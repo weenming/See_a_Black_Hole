@@ -1,8 +1,7 @@
 #include <cmath>
 #include <vector>
 
-#include "const.hpp"
-#include "data3d.hpp"
+#include "./../utils/const.hpp"
 
 using namespace std;
 

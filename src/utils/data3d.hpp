@@ -1,4 +1,3 @@
-#include <stdio.h>
 
 #include <cmath>
 #include <vector>
@@ -14,11 +13,9 @@ class VectorCartesian {
   double y;
   double z;
 
+  VectorCartesian() { return; }
   VectorCartesian(double x, double y, double z) { set_cartesian(x, y, z); }
   VectorCartesian(vector3 vec) { set_cartesian(vec); }
-  VectorCartesian(VectorSpherical vec) {
-    set_cartesian(vec.get_x(), vec.get_y(), vec.get_z());
-  }
 
   void set_cartesian(vector3 vec) {
     x = vec[0];
@@ -67,6 +64,7 @@ class VectorSpherical {
   double theta;
   double phi;
 
+  VectorSpherical() { return; }
   VectorSpherical(double x, double y, double z) { set_cartesian(x, y, z); }
   VectorSpherical(vector3 vec) { set_spherical(vec); }
   VectorSpherical(VectorCartesian vec) {
@@ -96,9 +94,54 @@ class VectorSpherical {
   double get_x() { return r * sin(theta) * cos(phi); }
   double get_y() { return r * sin(theta) * sin(phi); }
   double get_z() { return r * cos(theta); }
+};
 
-  vector3 get_normalized_cartesian() {
-    // normalized cartedian coord.
-    return vector3({get_x() / r, get_y() / r, get_z() / r});
+class VectorBL {
+ public:
+  double r;
+  double theta;
+  double phi;
+  double a;
+
+  VectorBL() { return; }
+  VectorBL(double x, double y, double z, double a) {
+    set_cartesian(x, y, z, a);
+    this->a = a;
+  }
+  VectorBL(vector3 vec, double a) {
+    vec[0] = make_BL_r(vec[0], a);
+    set_BL(vec);
+    this->a = a;
+  }
+  VectorBL(VectorCartesian vec, double a) {
+    set_BL(make_BL_r(r, a), vec.get_theta(), vec.get_phi());
+    this->a = a;
+  }
+
+  void set_BL(vector3 vec) {
+    r = vec[0];
+    theta = vec[1];
+    phi = vec[2];
+  }
+  void set_BL(double r, double theta, double phi) {
+    this->r = r;
+    this->theta = theta;
+    this->phi = phi;
+  }
+  void set_cartesian(double x, double y, double z, double a) {
+    r = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
+    r = make_BL_r(r, a);
+    theta = acos(z / r);
+
+    double ang = atan(y / x);
+    int is_neg = y < 0;
+    ang += ((ang < 0) + (is_neg < 0)) * Pi;
+    phi = ang;
   };
+
+  double get_x() { return make_BL_r(r, a) * sin(theta) * cos(phi); }
+  double get_y() { return make_BL_r(r, a) * sin(theta) * sin(phi); }
+  double get_z() { return make_BL_r(r, a) * cos(theta); }
+
+  double make_BL_r(double r, double a) { return sqrt(pow(r, 2) + pow(a, 2)); }
 };
