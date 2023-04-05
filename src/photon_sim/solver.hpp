@@ -105,16 +105,23 @@ class SolverRK {
       ptheta += RK_k(k1_ptheta, k2_ptheta, k3_ptheta, k4_ptheta) * step_size;
 
       // check
-      if (this->is_inside(r, pr, last_pr)) return;
+      if (this->is_inside(r, pr, last_pr)) {
+        final_r = final_v = NULL;
+        return;
+      }
       last_pr = pr;
 
       trajectory->at(i) = (VectorBL(vector3({r, theta, phi}), black_hole->a));
       i++;
-
-      // DEBUG
-      cout << r << " " << theta << " " << phi << " " << pr << " " << ptheta
-           << endl;
     }
+    trajectory->shrink_to_fit();
+
+    final_r = new VectorBL(vector3{r, theta, phi}, black_hole->a);
+    final_v = new VectorBL(
+        vector3{trajectory->at(i - 1).r - trajectory->at(i - 2).r,
+                trajectory->at(i - 1).theta - trajectory->at(i - 2).theta,
+                trajectory->at(i - 1).phi - trajectory->at(i - 2).phi},
+        black_hole->a);
     return;
   }
 

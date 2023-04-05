@@ -9,9 +9,10 @@
 using namespace std;
 
 int main() {
-  for (double a = 0; a < 1; a += 0.1) {
-    double init_vx = 0.053;
-    double init_vy = 0.;
+  for (double init_vy = 0; init_vy < 1; init_vy += 0.1) {
+    double a = 1;
+    double init_vx = 0.0;
+
     double view_theta = Pi / 2;
     double view_r = 100.;
 
