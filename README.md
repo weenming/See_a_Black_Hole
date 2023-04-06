@@ -23,7 +23,10 @@ centered beam "splits up" after being bent by the BH, we can calculate the relat
 ### Black Hole
 
 [Kerr Spherical Photon Orbits](https://duetosymmetry.com/tool/kerr-circular-photon-orbits/)
+
 [Ray Tracing in Curved Space Time](http://locklessinc.com/articles/raytracing/)
+
+[Ray Tracing in Curved Space Time](https://www.codeproject.com/Articles/994466/Ray-Tracing-a-Black-Hole-in-Csharp)
 
 ### Ray Tracing
 
