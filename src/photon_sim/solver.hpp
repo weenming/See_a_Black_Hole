@@ -118,9 +118,9 @@ class SolverRK {
 
     final_r = new VectorBL(vector3{r, theta, phi}, black_hole->a);
     final_v = new VectorBL(
-        vector3{trajectory->at(i - 1).r - trajectory->at(i - 2).r,
-                trajectory->at(i - 1).theta - trajectory->at(i - 2).theta,
-                trajectory->at(i - 1).phi - trajectory->at(i - 2).phi},
+        trajectory->at(i - 1).get_x() - trajectory->at(i - 2).get_x(),
+        trajectory->at(i - 1).get_y() - trajectory->at(i - 2).get_y(),
+        trajectory->at(i - 1).get_z() - trajectory->at(i - 2).get_z(),
         black_hole->a);
     return;
   }

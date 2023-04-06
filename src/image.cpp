@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 
@@ -17,35 +18,60 @@ SolverRK* solve(double a, double init_vx, double init_vy) {
   solver->solve(2000, -0.1);
   return solver;
 }
-double intesity(vector<SolverRK*>& solvers) {
-  auto make_angle = [](SolverRK* solver) {
-    double phi = solver->final_r->phi;
-    double theta = solver->final_r->theta;
-    double phidot = solver->final_v->phi;
-    double theatdot = solver->final_v->theta;
+
+double intensity(vector<SolverRK*> solvers, double d) {
+  double dtheta =
+      max({solvers[0]->final_v->theta, solvers[1]->final_v->theta,
+           solvers[2]->final_v->theta, solvers[3]->final_v->theta}) -
+      min({solvers[0]->final_v->theta, solvers[1]->final_v->theta,
+           solvers[2]->final_v->theta, solvers[3]->final_v->theta});
+
+  double dphi = max({solvers[0]->final_v->phi, solvers[1]->final_v->phi,
+                     solvers[2]->final_v->phi, solvers[3]->final_v->phi}) -
+                min({solvers[0]->final_v->phi, solvers[1]->final_v->phi,
+                     solvers[2]->final_v->phi, solvers[3]->final_v->phi});
+  double avgtheta = solvers[0]->final_v->theta;
+
+  return dtheta * dphi * sin(avgtheta) / (2 * pow(d, 2));
+}
+
+bool no_null(vector<SolverRK*> solvers) {
+  auto solver_no_null = [](SolverRK* s) {
+    return s->final_r != NULL && s->final_v != NULL;
   };
-  return 0.;
+  for (auto s : solvers) {
+    if (!solver_no_null(s)) return false;
+  }
+  return true;
 }
 
 int main() {
   double d = 1e-5;
   int N = 100;
-  vector<vector<double>> img(100);
-  for (double init_vy = 0; init_vy < 1; init_vy += 1 / N) {
-    for (double init_vx = 0; init_vx < 1; init_vx += 1 / N) {
+  double vx_max = 0.1;
+  double vy_max = 0.1;
+  vector<vector<double>> img;
+
+  for (double init_vy = 0; init_vy < vy_max; init_vy += vy_max / N) {
+    cout << init_vy << endl;
+    vector<double> row;
+    for (double init_vx = 0; init_vx < vx_max; init_vx += vx_max / N) {
       /**
        * Approach: assume homogeneous background
        * at each pixel, make small variation of outgoing light
        * intensity \propto angle
        * */
-      SolverRK* solver1 = solve(0., init_vx - d, init_vy);
-      SolverRK* solver2 = solve(0., init_vx + d, init_vy);
-      SolverRK* solver3 = solve(0., init_vx, init_vy - d);
-      SolverRK* solver4 = solve(0., init_vx, init_vy + d);
-
-      img.back().push_back(
-          intensity(vector<SolverRK*>{solver1, solver2, solver3, solver4}));
+      vector<SolverRK*> solvers;
+      solvers.push_back(solve(0., init_vx * (1 - d), init_vy));
+      solvers.push_back(solve(0., init_vx * (1 + d), init_vy));
+      solvers.push_back(solve(0., init_vx, init_vy * (1 - d)));
+      solvers.push_back(solve(0., init_vx, init_vy * (1 + d)));
+      if (no_null(solvers))
+        row.push_back(intensity(solvers, d));
+      else
+        row.push_back(0.);
     }
+    img.push_back(row);
   }
 
   char s[100];
@@ -55,8 +81,12 @@ int main() {
   file.open(s);
   file.clear();
   for (vector<double> v : img) {
-    file << bl.r << "," << bl.theta << "," << bl.phi << endl;
+    for (double p : v) {
+      file << p << ",";
+    }
+    file << endl;
   }
+
   file.close();
 
   return 0;
