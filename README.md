@@ -6,17 +6,24 @@ Produces BH images using ray-tracing around a spinning BH.
 
 Ray tracing by solving an ODE has been implemented in C++.
 Some generated results (may contain problems currently) are under `/notebook/debug_figs` directory
-For now you can play around with the results in `data` which includes some simulations in the equator plane.
+For now, you can play around with the results in `data` which includes some simulations in the equator plane.
 
-# To-do
-- compare with theory and debug
-- effect of accretion disk 
+# Results
+The image of the photon ring:
+![photon_ring](./result/good_looking_figure.png)
+
+Trajectories of photons
+![trajectory](./result/non-spinning_photon_ring.png)
+
 
 # Implementation
 
 To generate the image, assume the background is homogeneously illuminating. By calculating how a very locally 
 centered beam "splits up" after being bent by the BH, we can calculate the relative illumination in that direction.
 
+# To-do
+- compare with theory and debug
+- effect of the accretion disk 
 
 # Reference
 
