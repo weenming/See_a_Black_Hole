@@ -13,7 +13,7 @@ The image of the photon ring:
 
 <img src="./result/good_looking_figure.png" width=200>
 
-Trajectories of photons
+Trajectories of photons which form the photon ring
 
 <img src="./result/non-spinning_photon_ring.png" width=200>
 
