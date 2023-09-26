@@ -10,10 +10,10 @@ For now, you can play around with the results in `data` which includes some simu
 
 # Results
 The image of the photon ring:
-![photon_ring](./result/good_looking_figure.png)
+![photon_ring](https://github.com/weenming/See_a_Black_Hole/main/result/good_looking_figure.png)
 
 Trajectories of photons
-![trajectory](./result/non-spinning_photon_ring.png)
+![trajectory](https://github.com/weenming/See_a_Black_Hole/main/result/non-spinning_photon_ring.png)
 
 
 # Implementation
